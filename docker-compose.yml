@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL 16 + PostGIS 3.4 Spatial Database
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: crimemap-postgis
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-crimemap_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-crimemap_secure_2026}
+      POSTGRES_DB: ${POSTGRES_DB:-crimemap_db}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - crimemap_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-crimemap_admin} -d ${POSTGRES_DB:-crimemap_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - crimemap-network
+
+  # 2. FastAPI Backend Service (GIS, ML, RBAC, REST APIs)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: crimemap-backend
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-crimemap_admin}:${POSTGRES_PASSWORD:-crimemap_secure_2026}@db:5432/${POSTGRES_DB:-crimemap_db}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-crimemap_jwt_secret_key_hackathon_2026_supersecure_32chars}
+      JWT_ALGORITHM: HS256
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: 1440
+      CORS_ORIGINS: '["http://localhost", "http://localhost:80", "http://localhost:3000", "http://localhost:5173"]'
+      ENVIRONMENT: production
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "echo 'Applying migrations and seeding database...' &&
+             python -m alembic upgrade head || true &&
+             python seed_data.py &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4"
+    restart: unless-stopped
+    networks:
+      - crimemap-network
+
+  # 3. React SPA Frontend Service (Nginx Reverse Proxy)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: crimemap-frontend
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - crimemap-network
+
+volumes:
+  crimemap_pgdata:
+    driver: local
+
+networks:
+  crimemap-network:
+    driver: bridge

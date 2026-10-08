@@ -1,0 +1,74 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+/* Base Body Styles - Clean Government Portal Theme */
+body {
+  background-color: #f8fafc;
+  color: #0f172a;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Leaflet map styles */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  font-family: inherit;
+  background-color: #e2e8f0;
+}
+
+/* Custom leaflet popup styling - Light Government Theme */
+.leaflet-popup-content-wrapper {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+}
+
+.leaflet-popup-tip {
+  background: #ffffff;
+}
+
+/* Custom scrollbars - Light Grey */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* AG Grid Light Government Theme Customization */
+.ag-theme-quartz {
+  --ag-background-color: #ffffff;
+  --ag-header-background-color: #f8fafc;
+  --ag-odd-row-background-color: #fbfcfe;
+  --ag-border-color: #e2e8f0;
+  --ag-foreground-color: #0f172a;
+  --ag-header-foreground-color: #334155;
+  --ag-row-hover-color: #f1f5f9;
+  --ag-selected-row-background-color: #e0f2fe;
+  --ag-font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --ag-font-size: 11px;
+}
+
+.ag-theme-quartz-dark {
+  --ag-background-color: #ffffff;
+  --ag-header-background-color: #f8fafc;
+  --ag-odd-row-background-color: #fbfcfe;
+  --ag-border-color: #e2e8f0;
+  --ag-foreground-color: #0f172a;
+  --ag-header-foreground-color: #334155;
+  --ag-row-hover-color: #f1f5f9;
+  --ag-selected-row-background-color: #e0f2fe;
+  --ag-font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --ag-font-size: 11px;
+}
